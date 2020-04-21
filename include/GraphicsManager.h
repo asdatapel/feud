@@ -1,7 +1,9 @@
 #pragma once
+
 #include <string.h>
 #include <list>
 #include <iostream>
+#include <unordered_map>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -10,6 +12,7 @@
 #include <SFML/OpenGL.hpp>
 
 #include "Const.h"
+#include "ShaderDefinition.hpp"
 
 using namespace Const;
 
@@ -18,17 +21,10 @@ struct BufferResource {
 	GLuint vao;
 };
 
-struct Attribute {
-	GLint handle;
-	std::string name;
-	int length;
-	int stride;
-	int distanceToFirst;
-};
-
 struct ShaderResource {
 	GLuint handle;
-	std::list<Attribute> attributes;
+	std::unordered_map<GLint, Attribute> attributes;
+	std::unordered_map<std::string, GLint> uniforms;
 };
 
 struct ArrayTextureResource {
@@ -48,11 +44,9 @@ public:
 	GraphicsManager();
 	~GraphicsManager();
 
-	int newShaderResource(std::string vertShader, std::string fragShader, std::list<Attribute> attributes);
+	int newShaderResource(std::string name);
 	void bindShader(int id);
 	void deleteShader(int id);
-
-	int getUniform(int shaderId, std::string name);
 
 	int getArrayTexture(std::string name);
 	int getTexture(std::string name);
@@ -65,6 +59,7 @@ public:
 	void renderBuffer(int id, int length);
 	void deleteBuffer(int id);
 
+	void uploadUniformMatrix4fv(int shaderId, std::string name, glm::mat4 mat);
 private:
 	std::map < int, BufferResource> bufferResources;
 	std::map < int, ShaderResource> shaderResources;

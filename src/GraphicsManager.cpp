@@ -1,8 +1,13 @@
 #include "GraphicsManager.h"
 
-GraphicsManager::GraphicsManager() {
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+GraphicsManager::GraphicsManager()
+{
     GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
         std::cout << "prahics manager before" << err << std::endl;
     }
 
@@ -15,19 +20,20 @@ GraphicsManager::GraphicsManager() {
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
         std::cout << "gprahics manager after" << err << std::endl;
     }
-
 }
-
 
 GraphicsManager::~GraphicsManager() {}
 
-int
-GraphicsManager::newShaderResource(std::string vertShader, std::string fragShader, std::list<Attribute> attributes) {
+int GraphicsManager::newShaderResource(std::string name)
+{
+    ShaderDefinition def = ShaderDefinition::load(name);
     ShaderResource shader;
-    const char *vert = vertShader.c_str();
+
+    const char *vert = def.vert.c_str();
     GLuint vertexShader3D = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader3D, 1, &vert, NULL);
     glCompileShader(vertexShader3D);
@@ -36,11 +42,10 @@ GraphicsManager::newShaderResource(std::string vertShader, std::string fragShade
     glGetShaderInfoLog(vertexShader3D, 300, NULL, log);
     std::cout << log << '\n';
 
-    const char *frag = fragShader.c_str();
+    const char *frag = def.frag.c_str();
     GLuint fragmentShader3D = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader3D, 1, &frag, NULL);
     glCompileShader(fragmentShader3D);
-
 
     glGetShaderInfoLog(fragmentShader3D, 300, NULL, log);
     std::cout << log << '\n';
@@ -56,13 +61,19 @@ GraphicsManager::newShaderResource(std::string vertShader, std::string fragShade
     glDeleteShader(vertexShader3D);
     glDeleteShader(fragmentShader3D);
 
-    for (std::list<Attribute>::iterator it = attributes.begin(); it != attributes.end(); ++it) {
-        it->handle = glGetAttribLocation(shader.handle, it->name.c_str());
-        shader.attributes.push_back(*it);
+    for (const Attribute& a : def.attributes)
+    {
+        shader.attributes[glGetAttribLocation(shader.handle, a.name.c_str())] = a;
+    }
+
+    for (const std::string& u : def.uniforms)
+    {
+        shader.uniforms[u] = glGetUniformLocation(shader.handle, u.c_str());;
     }
 
     int next = 0;
-    for (auto &i : shaderResources) {
+    for (auto &i : shaderResources)
+    {
         if (i.first != next)
             break;
         ++next;
@@ -71,24 +82,21 @@ GraphicsManager::newShaderResource(std::string vertShader, std::string fragShade
     return next;
 }
 
-void GraphicsManager::bindShader(int id) {
+void GraphicsManager::bindShader(int id)
+{
     glUseProgram(shaderResources[id].handle);
 }
 
-int GraphicsManager::getUniform(int shaderId, std::string name) {
-    GLint handle = glGetUniformLocation(shaderResources[shaderId].handle, name.c_str());
-    return handle;
-}
-
-int GraphicsManager::getArrayTexture(std::string name) {
-    name = "textures/grass.png";
-
+int GraphicsManager::getArrayTexture(std::string name)
+{
     GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
         std::cout << "getarraytex beginning: " << err << std::endl;
     }
 
-    if (arrayTextureResources.find(name) != arrayTextureResources.end()) {
+    if (arrayTextureResources.find(name) != arrayTextureResources.end())
+    {
         return arrayTextureResources[name].handle;
     }
 
@@ -98,35 +106,38 @@ int GraphicsManager::getArrayTexture(std::string name) {
     tex.image.flipVertically();
 
     int next = 0;
-    for (auto &x : arrayTextureResources) {
+    for (auto &x : arrayTextureResources)
+    {
         if (x.second.handle >= next)
             next = x.second.handle + 1;
     }
-
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureArray);
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, next, tex.image.getSize().x, tex.image.getSize().y, 1, GL_RGBA,
                     GL_UNSIGNED_BYTE, tex.image.getPixelsPtr());
 
-
     tex.handle = next;
     arrayTextureResources.insert({name, tex});
 
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
         std::cout << "getarraytexend: " << err << std::endl;
     }
 
     return next;
 }
 
-int GraphicsManager::getTexture(std::string name) {
+int GraphicsManager::getTexture(std::string name)
+{
     GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
         std::cout << "getTexture beginning: " << err << std::endl;
     }
 
     int next = 0;
-    for (auto &x : textureResources) {
+    for (auto &x : textureResources)
+    {
         if (x.second.name == name)
             return x.first;
         if (x.first != next)
@@ -142,11 +153,10 @@ int GraphicsManager::getTexture(std::string name) {
     glGenTextures(1, &(tex.handle));
     glBindTexture(GL_TEXTURE_2D, tex.handle);
     glTexImage2D(
-            GL_TEXTURE_2D, 0, GL_RGBA,
-            tex.image.getSize().x, tex.image.getSize().y,
-            0,
-            GL_RGBA, GL_UNSIGNED_BYTE, tex.image.getPixelsPtr()
-    );
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        tex.image.getSize().x, tex.image.getSize().y,
+        0,
+        GL_RGBA, GL_UNSIGNED_BYTE, tex.image.getPixelsPtr());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -154,7 +164,8 @@ int GraphicsManager::getTexture(std::string name) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    while ((err = glGetError()) != GL_NO_ERROR) {
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
         std::cout << "getTexture end: " << err << std::endl;
     }
 
@@ -163,15 +174,18 @@ int GraphicsManager::getTexture(std::string name) {
     return next;
 }
 
-void GraphicsManager::bindArrayTexture() {
+void GraphicsManager::bindArrayTexture()
+{
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureArray);
 }
 
-void GraphicsManager::bindTexture(int id) {
+void GraphicsManager::bindTexture(int id)
+{
     glBindTexture(GL_TEXTURE_2D, textureResources[id].handle);
 }
 
-int GraphicsManager::newBuffer(int shaderId) {
+int GraphicsManager::newBuffer(int shaderId)
+{
     GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -180,14 +194,16 @@ int GraphicsManager::newBuffer(int shaderId) {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    for (auto const &attrib : shaderResources[shaderId].attributes) {
-        glEnableVertexAttribArray(attrib.handle);
-        glVertexAttribPointer(attrib.handle, attrib.length, GL_FLOAT, GL_FALSE, attrib.stride * sizeof(GLfloat),
-                              (void *) (attrib.distanceToFirst * sizeof(float)));
+    for (auto const &attrib : shaderResources[shaderId].attributes)
+    {
+        glEnableVertexAttribArray(attrib.first);
+        glVertexAttribPointer(attrib.first, attrib.second.length, GL_FLOAT, GL_FALSE, attrib.second.stride * sizeof(GLfloat),
+                              (void *)(attrib.second.distanceToFirst * sizeof(float)));
     }
 
     int next = 0;
-    for (auto &x : bufferResources) {
+    for (auto &x : bufferResources)
+    {
         if (x.first != next)
             break;
         ++next;
@@ -197,15 +213,18 @@ int GraphicsManager::newBuffer(int shaderId) {
     return next;
 }
 
-void GraphicsManager::updateBuffer(int id, float *mesh, int length) {
+void GraphicsManager::updateBuffer(int id, float *mesh, int length)
+{
     BufferResource b = bufferResources[id];
     glBindBuffer(GL_ARRAY_BUFFER, b.vbo);
 
     glBufferData(GL_ARRAY_BUFFER, length * sizeof(float), mesh, GL_STATIC_DRAW);
 }
 
-void GraphicsManager::renderBuffer(int id, int points) {
-    if (points != 0) {
+void GraphicsManager::renderBuffer(int id, int points)
+{
+    if (points != 0)
+    {
         BufferResource b = bufferResources[id];
         glBindVertexArray(b.vao);
 
@@ -213,8 +232,15 @@ void GraphicsManager::renderBuffer(int id, int points) {
     }
 }
 
-void GraphicsManager::deleteBuffer(int id) {
+void GraphicsManager::deleteBuffer(int id)
+{
     BufferResource b = bufferResources[id];
     glDeleteBuffers(1, &b.vbo);
     glDeleteBuffers(1, &b.vao);
+}
+
+
+void GraphicsManager::uploadUniformMatrix4fv(int shaderId, std::string name, glm::mat4 mat)
+{        
+    glUniformMatrix4fv(shaderResources[shaderId].uniforms[name], 1, GL_FALSE, glm::value_ptr(mat));
 }

@@ -17,28 +17,6 @@
 #include "Camera.h"
 #include "Mesh.h"
 
-std::string readFile(const char *filePath)
-{
-    std::string content;
-    std::ifstream fileStream(filePath, std::ios::in);
-
-    if (!fileStream.is_open())
-    {
-        std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
-        return "";
-    }
-
-    std::string line = "";
-    while (!fileStream.eof())
-    {
-        std::getline(fileStream, line);
-        content.append(line + "\n");
-    }
-
-    fileStream.close();
-    return content;
-}
-
 int main()
 {
 
@@ -68,17 +46,7 @@ int main()
     GraphicsManager graphics;
 
     // move this all to a config file (base.config)
-    std::string vert = readFile("shaders/base.vs");
-    std::string frag = readFile("shaders/base.fs");
-    std::list<Attribute> attributes;
-    Attribute a = {0, std::string("position"), 3, 8, 0};
-    attributes.push_back(a);
-    a = {0, std::string("incolor"), 3, 8, 3};
-    attributes.push_back(a);
-    a = {0, std::string("texcoord"), 2, 8, 6};
-    attributes.push_back(a);
-    int shader3d = graphics.newShaderResource(vert, frag, attributes);
-    GLint matrixUniform = graphics.getUniform(shader3d, "PVM");
+    int shader3d = graphics.newShaderResource("shaders/base");
 
     Mesh cube;
     cube.loadFromFile("models/cube");
@@ -90,18 +58,10 @@ int main()
 
     graphics.bindShader(shader3d);
 
-    // start main loop
-    sf::Clock timer;
-
     bool cameraControl = true;
     bool running = true;
-    timer.restart();
     while (running)
     {
-        float elapsedTime = timer.getElapsedTime().asSeconds();
-
-        timer.restart();
-
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -202,9 +162,6 @@ int main()
         {
         }
 
-        //Rendering
-        //glm::mat4 PV = camera.getPVMat();
-
         glm::mat4 proj = glm::perspective(glm::radians(70.0f), 1920.0f / 1080.0f, 0.01f, 1000.0f);
         glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -1.0f),
                                      glm::vec3(0.0f, 0.0f, 2.0f),
@@ -226,7 +183,7 @@ int main()
         glEnable(GL_DEPTH_TEST);
         graphics.bindShader(shader3d);
         graphics.bindTexture(tex);
-        glUniformMatrix4fv(matrixUniform, 1, GL_FALSE, glm::value_ptr(proj * view * modelMat));
+        graphics.uploadUniformMatrix4fv(shader3d, "PVM", proj * view * modelMat);
 
         graphics.renderBuffer(cubeBuffer, 9);
 

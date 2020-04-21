@@ -23,7 +23,7 @@ Box::Box(GraphicsManager* g, AABB a, int shaderId) {
     //matrix = glm::translate(glm::scale(glm::mat4(1.0f), {a.size.x, a.size.y, a.size.z}), glm::vec3(aabb.position.x, aabb.position.y, aabb.position.z));
     matrix = glm::scale(glm::translate(glm::mat4(1.0f), {aabb.position.x, aabb.position.y, aabb.position.z}), {a.size.x, a.size.y, a.size.z});
 
-    matrixUniform = g->getUniform(shaderId, "PVM");
+    //matrixUniform = g->getUniform(shaderId, "PVM");
 
     velocity = {0,0,0};
 
