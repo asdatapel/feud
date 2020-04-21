@@ -9,11 +9,7 @@
 
 #include "Types.h"
 #include "GraphicsManager.h"
-#include "World.h"
-#include "Chunk.h"
-#include "Player.h"
 #include "shaders.hpp"
-#include "Perlin.h"
 #include "Camera.h"
 #include "Mesh.h"
 
