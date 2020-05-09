@@ -1,23 +1,17 @@
-//
-// Created by Asda Tapel on 1/1/17.
-//
-
 #ifndef MINECRAFT_CLONE_MESH_H
 #define MINECRAFT_CLONE_MESH_H
 
 #include <string>
 #include <fstream>
 
-
-class Mesh {
+class Mesh
+{
 public:
-    void loadFromFile(std::string filename);
-    void clearMesh();
+    Mesh(std::string name);
 
-    float *vertices;
-    int vertexCount;
-
+    float *m_data;
+    int m_len;
+    int m_vertCount;
 };
-
 
 #endif //MINECRAFT_CLONE_MESH_H

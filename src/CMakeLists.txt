@@ -4,6 +4,7 @@ set(SOURCE_FILES
     BoundingBox.cpp
     Camera.cpp
     DebugDrawer.cpp
+    Drawable.cpp
     GraphicsManager.cpp
     simplexnoise.cpp
     vec.cpp

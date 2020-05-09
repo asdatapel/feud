@@ -49,6 +49,7 @@ public:
 	void deleteShader(int id);
 
 	int getArrayTexture(std::string name);
+	unsigned int uploadTexture(const unsigned char *ptr, int sizeX, int sizeY);
 	int getTexture(std::string name);
 	void bindArrayTexture();
 	void bindTexture(int id);

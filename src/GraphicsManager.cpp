@@ -61,14 +61,15 @@ int GraphicsManager::newShaderResource(std::string name)
     glDeleteShader(vertexShader3D);
     glDeleteShader(fragmentShader3D);
 
-    for (const Attribute& a : def.attributes)
+    for (const Attribute &a : def.attributes)
     {
         shader.attributes[glGetAttribLocation(shader.handle, a.name.c_str())] = a;
     }
 
-    for (const std::string& u : def.uniforms)
+    for (const std::string &u : def.uniforms)
     {
-        shader.uniforms[u] = glGetUniformLocation(shader.handle, u.c_str());;
+        shader.uniforms[u] = glGetUniformLocation(shader.handle, u.c_str());
+        ;
     }
 
     int next = 0;
@@ -127,6 +128,31 @@ int GraphicsManager::getArrayTexture(std::string name)
     return next;
 }
 
+unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX, int sizeY)
+{
+    GLuint handle;
+    glGenTextures(1, &handle);
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        sizeX, sizeY, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, ptr);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        std::cout << "uploadTexture end: " << err << std::endl;
+    }
+
+    return handle;
+}
+
 int GraphicsManager::getTexture(std::string name)
 {
     GLenum err;
@@ -148,7 +174,6 @@ int GraphicsManager::getTexture(std::string name)
     TextureResource tex;
 
     tex.image.loadFromFile(name);
-    tex.image.flipVertically();
 
     glGenTextures(1, &(tex.handle));
     glBindTexture(GL_TEXTURE_2D, tex.handle);
@@ -181,7 +206,7 @@ void GraphicsManager::bindArrayTexture()
 
 void GraphicsManager::bindTexture(int id)
 {
-    glBindTexture(GL_TEXTURE_2D, textureResources[id].handle);
+    glBindTexture(GL_TEXTURE_2D, id);
 }
 
 int GraphicsManager::newBuffer(int shaderId)
@@ -239,8 +264,7 @@ void GraphicsManager::deleteBuffer(int id)
     glDeleteBuffers(1, &b.vao);
 }
 
-
 void GraphicsManager::uploadUniformMatrix4fv(int shaderId, std::string name, glm::mat4 mat)
-{        
+{
     glUniformMatrix4fv(shaderResources[shaderId].uniforms[name], 1, GL_FALSE, glm::value_ptr(mat));
 }

@@ -11,7 +11,7 @@
 #include "GraphicsManager.h"
 #include "shaders.hpp"
 #include "Camera.h"
-#include "Mesh.h"
+#include "Drawable.hpp"
 
 int main()
 {
@@ -32,27 +32,30 @@ int main()
     window.setVerticalSyncEnabled(true);
     window.setMouseCursorVisible(false);
     glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only wireframes 
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only wireframes
 
     glClearColor(7 / 255.0, 56 / 255.0, 145 / 255.0, 1);
 
     GraphicsManager graphics;
 
-    // move this all to a config file (base.config)
     int shader3d = graphics.newShaderResource("shaders/base");
 
-    Mesh cube;
-    cube.loadFromFile("models/cube");
-    int cubeBuffer = graphics.newBuffer(shader3d);
-    graphics.updateBuffer(cubeBuffer, cube.vertices, cube.vertexCount);
-    
-    int tex = graphics.getTexture("textures/grass.png");
-    graphics.bindTexture(tex);
+    Drawable piece3(&graphics, shader3d);
+    piece3.loadMesh("models/feud_bar3.obj");
+    piece3.loadTexture("textures/feud_bar2.png");
+    piece3.upload();
+
+    Drawable piece3_2(&graphics, shader3d);
+    piece3_2.loadMesh("models/feud_bar3.obj");
+    piece3_2.loadTexture("textures/feud_bar2.png");
+    piece3_2.upload();
 
     graphics.bindShader(shader3d);
+
+    int COUNTER = 0;
 
     bool cameraControl = true;
     bool running = true;
@@ -162,7 +165,17 @@ int main()
         glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -1.0f),
                                      glm::vec3(0.0f, 0.0f, 2.0f),
                                      glm::vec3(0.0f, 1.0f, 0.0f));
+
         glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        modelMat = glm::rotate(modelMat, glm::radians(180.f), glm::vec3(0.000f, 1.0f, 0.0f));
+
+        glm::mat4 model2Mat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0));
+        model2Mat = glm::rotate(model2Mat, glm::radians(COUNTER * .1f), glm::vec3(0.4f, 1.0f, 0.0f));
+        
+        COUNTER += 5;
+
+        piece3.setTransform(modelMat);
+        piece3_2.setTransform(model2Mat);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
@@ -175,13 +188,13 @@ int main()
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         glEnable(GL_DEPTH_TEST);
-        graphics.bindShader(shader3d);
-        graphics.bindTexture(tex);
-        graphics.uploadUniformMatrix4fv(shader3d, "PVM", proj * view * modelMat);
 
-        graphics.renderBuffer(cubeBuffer, 9);
+         graphics.bindShader(shader3d);
+        // graphics.uploadUniformMatrix4fv(shader3d, "PVM", proj * view * modelMat);
+
+        piece3.draw(proj * view);
+        piece3_2.draw(proj * view);
 
         window.display();
     }
