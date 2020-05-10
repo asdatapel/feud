@@ -14,6 +14,8 @@ set(SOURCE_FILES
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/ext/nlohmann_json ${PROJECT_SOURCE_DIR}/ext/nlohmann_json)
+
 include_directories(${PROJECT_SOURCE_DIR}/ext/glm)
 include_directories(${PROJECT_SOURCE_DIR}/ext/glew/include)
 include_directories(${PROJECT_SOURCE_DIR}/ext/SFML/include)
@@ -25,12 +27,20 @@ add_executable(feud ${SOURCE_FILES})
 
 find_package(OpenGL)
 
-target_link_libraries(feud ${OPENGL_LIBRARIES})
-target_link_libraries(feud GLEW.a)
-target_link_libraries(feud sfml-system.a)
-target_link_libraries(feud sfml-window.a)
-target_link_libraries(feud sfml-graphics.a)
+if (UNIX)
+    target_link_libraries(feud ${OPENGL_LIBRARIES})
+    target_link_libraries(feud GLEW.a)
+    target_link_libraries(feud debug sfml-system-d.a optimized sfml-system.a)
+    target_link_libraries(feud debug sfml-window-d.a optimized sfml-window.a)
+    target_link_libraries(feud debug sfml-graphics-d.a optimized sfml-graphics.a)
+    target_link_libraries(feud nlohmann_json::nlohmann_json)
+endif()
 
-
-find_package(nlohmann_json 3.2.0 REQUIRED)
-target_link_libraries(feud nlohmann_json::nlohmann_json)
+if (WIN32)
+    target_link_libraries(feud ${OPENGL_LIBRARIES})
+    target_link_libraries(feud glew32s)
+    target_link_libraries(feud debug sfml-system-d optimized sfml-system)
+    target_link_libraries(feud debug sfml-window-d optimized sfml-window)
+    target_link_libraries(feud debug sfml-graphics-d optimized sfml-graphics)
+    target_link_libraries(feud nlohmann_json::nlohmann_json)
+endif ()

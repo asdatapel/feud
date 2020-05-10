@@ -3,28 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GraphicsManager::GraphicsManager()
-{
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cout << "prahics manager before" << err << std::endl;
-    }
-
-    glGenTextures(1, &textureArray);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, textureArray);
-
-    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, textureWidth, textureHeight, textureCount);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cout << "gprahics manager after" << err << std::endl;
-    }
-}
+GraphicsManager::GraphicsManager() {}
 
 GraphicsManager::~GraphicsManager() {}
 
@@ -69,7 +48,6 @@ int GraphicsManager::newShaderResource(std::string name)
     for (const std::string &u : def.uniforms)
     {
         shader.uniforms[u] = glGetUniformLocation(shader.handle, u.c_str());
-        ;
     }
 
     int next = 0;
@@ -88,46 +66,6 @@ void GraphicsManager::bindShader(int id)
     glUseProgram(shaderResources[id].handle);
 }
 
-int GraphicsManager::getArrayTexture(std::string name)
-{
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cout << "getarraytex beginning: " << err << std::endl;
-    }
-
-    if (arrayTextureResources.find(name) != arrayTextureResources.end())
-    {
-        return arrayTextureResources[name].handle;
-    }
-
-    ArrayTextureResource tex;
-
-    tex.image.loadFromFile(name);
-    tex.image.flipVertically();
-
-    int next = 0;
-    for (auto &x : arrayTextureResources)
-    {
-        if (x.second.handle >= next)
-            next = x.second.handle + 1;
-    }
-
-    glBindTexture(GL_TEXTURE_2D_ARRAY, textureArray);
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, next, tex.image.getSize().x, tex.image.getSize().y, 1, GL_RGBA,
-                    GL_UNSIGNED_BYTE, tex.image.getPixelsPtr());
-
-    tex.handle = next;
-    arrayTextureResources.insert({name, tex});
-
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cout << "getarraytexend: " << err << std::endl;
-    }
-
-    return next;
-}
-
 unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX, int sizeY)
 {
     GLuint handle;
@@ -137,6 +75,10 @@ unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX,
         GL_TEXTURE_2D, 0, GL_RGBA,
         sizeX, sizeY, 0,
         GL_RGBA, GL_UNSIGNED_BYTE, ptr);
+
+    float aniso = 4.0f;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -151,57 +93,6 @@ unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX,
     }
 
     return handle;
-}
-
-int GraphicsManager::getTexture(std::string name)
-{
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cout << "getTexture beginning: " << err << std::endl;
-    }
-
-    int next = 0;
-    for (auto &x : textureResources)
-    {
-        if (x.second.name == name)
-            return x.first;
-        if (x.first != next)
-            break;
-        ++next;
-    }
-
-    TextureResource tex;
-
-    tex.image.loadFromFile(name);
-
-    glGenTextures(1, &(tex.handle));
-    glBindTexture(GL_TEXTURE_2D, tex.handle);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA,
-        tex.image.getSize().x, tex.image.getSize().y,
-        0,
-        GL_RGBA, GL_UNSIGNED_BYTE, tex.image.getPixelsPtr());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cout << "getTexture end: " << err << std::endl;
-    }
-
-    textureResources.insert({next, tex});
-
-    return next;
-}
-
-void GraphicsManager::bindArrayTexture()
-{
-    glBindTexture(GL_TEXTURE_2D_ARRAY, textureArray);
 }
 
 void GraphicsManager::bindTexture(int id)

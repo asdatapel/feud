@@ -13,7 +13,11 @@ void Drawable::loadMesh(std::string filename)
 
 void Drawable::loadTexture(std::string filename)
 {
-    texture.loadFromFile(filename);
+    if(!texture.loadFromFile(filename)){
+        std::cout << "ERRRRPR READING TEXTURE" << std::endl;
+    }
+    
+    texture.flipVertically();
 }
 
 void Drawable::upload()
@@ -33,7 +37,6 @@ void Drawable::draw()
 {
     graphicsManager->bindShader(shaderHandle);
     graphicsManager->bindTexture(textureHandle);
-
 
     graphicsManager->uploadUniformMatrix4fv(shaderHandle, "PVM", m_transform);
     graphicsManager->renderBuffer(meshHandle, mesh->m_vertCount);

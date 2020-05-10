@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-//#define GLEW_STATIC
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
 
@@ -44,16 +44,14 @@ int main()
     int shader3d = graphics.newShaderResource("shaders/base");
 
     Drawable piece3(&graphics, shader3d);
-    piece3.loadMesh("models/feud_bar3.obj");
-    piece3.loadTexture("textures/feud_bar2.png");
+    piece3.loadMesh("models/piece.obj");
+    piece3.loadTexture("textures/piece.png");
     piece3.upload();
 
     Drawable piece3_2(&graphics, shader3d);
-    piece3_2.loadMesh("models/feud_bar3.obj");
-    piece3_2.loadTexture("textures/feud_bar2.png");
+    piece3_2.loadMesh("models/piece.obj");
+    piece3_2.loadTexture("textures/piece.png");
     piece3_2.upload();
-
-    graphics.bindShader(shader3d);
 
     int COUNTER = 0;
 
@@ -162,15 +160,15 @@ int main()
         }
 
         glm::mat4 proj = glm::perspective(glm::radians(70.0f), 1920.0f / 1080.0f, 0.01f, 1000.0f);
-        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -1.0f),
-                                     glm::vec3(0.0f, 0.0f, 2.0f),
+        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f),
+                                     glm::vec3(0.0f, 0.0f, 0.0f),
                                      glm::vec3(0.0f, 1.0f, 0.0f));
 
         glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-        modelMat = glm::rotate(modelMat, glm::radians(180.f), glm::vec3(0.000f, 1.0f, 0.0f));
+        modelMat = glm::rotate(modelMat, glm::radians(COUNTER * .001f), glm::vec3(0.1f, 0.0f, 0.0f));
 
         glm::mat4 model2Mat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0));
-        model2Mat = glm::rotate(model2Mat, glm::radians(COUNTER * .1f), glm::vec3(0.4f, 1.0f, 0.0f));
+        model2Mat = glm::rotate(model2Mat, glm::radians(COUNTER * .1f), glm::vec3(0.4f, 0.0f, 0.0f));
         
         COUNTER += 5;
 
