@@ -1,4 +1,4 @@
-#include "GraphicsManager.h"
+#include "GraphicsManager.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

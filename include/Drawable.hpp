@@ -6,25 +6,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "GraphicsManager.h"
-#include "Mesh.h"
+#include "GraphicsManager.hpp"
+#include "Mesh.hpp"
 
-class Drawable
+struct Drawable
 {
-public:
-    Drawable(GraphicsManager *_graphicsManager, int _shaderHandle);
-    void loadMesh(std::string filename);
-    void loadTexture(std::string filename);
-    void upload();
-
-    void setTransform(glm::mat4 tranform);
-
-    void draw();
-    void draw(glm::mat4 pvTransform);
-
-private:
-    GraphicsManager *graphicsManager;
-
     Mesh *mesh;
     sf::Image texture;
 
@@ -32,7 +18,12 @@ private:
     int meshHandle;
     unsigned int textureHandle;
 
-    glm::mat4 m_transform;
+    glm::mat4 transform;
+
+    // to load piece:
+    //     data.loadMesh("models/piece.obj");
+    //     data.loadTexture("textures/piece.png");
+    //     data.upload();
 };
 
 #endif //MINECRAFT_CLONE_DRAWABLE_H

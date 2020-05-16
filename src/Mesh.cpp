@@ -9,7 +9,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Mesh.h"
+#include "Mesh.hpp"
 
 std::vector<std::string> split(std::string s, char elem)
 {

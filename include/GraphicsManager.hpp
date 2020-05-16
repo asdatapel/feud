@@ -10,11 +10,9 @@
 //#define GLEW_STATIC
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
+#include <glm/glm.hpp>
 
-#include "Const.h"
 #include "ShaderDefinition.hpp"
-
-using namespace Const;
 
 struct BufferResource
 {

@@ -1,13 +1,8 @@
 set(SOURCE_FILES 
     main.cpp
-    AABB.cpp 
-    BoundingBox.cpp
-    Camera.cpp
-    DebugDrawer.cpp
-    Drawable.cpp
+    AnimationSystem.cpp
+    BoardSystem.cpp
     GraphicsManager.cpp
-    simplexnoise.cpp
-    vec.cpp
     Mesh.cpp
     ShaderDefinition.cpp
 )

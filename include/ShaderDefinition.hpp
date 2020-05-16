@@ -5,7 +5,6 @@
 #include <list>
 #include <unordered_map>
 
-
 struct Attribute {
 	std::string name;
 	int length;
@@ -21,6 +20,5 @@ struct ShaderDefinition {
 
     static ShaderDefinition load(std::string name);
 };
-
 
 #endif //FEUD_SHADER_H
