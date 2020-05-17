@@ -9,6 +9,7 @@ struct UserAction
     };
 
     Type t;
+    int number = -1;
 };
 
 #endif //FEUD_USERACTION_HPP

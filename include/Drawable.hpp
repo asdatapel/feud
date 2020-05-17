@@ -8,6 +8,7 @@
 
 #include "GraphicsManager.hpp"
 #include "Mesh.hpp"
+#include "Transform.hpp"
 
 struct Drawable
 {
@@ -18,12 +19,7 @@ struct Drawable
     int meshHandle;
     unsigned int textureHandle;
 
-    glm::mat4 transform;
-
-    // to load piece:
-    //     data.loadMesh("models/piece.obj");
-    //     data.loadTexture("textures/piece.png");
-    //     data.upload();
+    Transform transform;
 };
 
 #endif //MINECRAFT_CLONE_DRAWABLE_H

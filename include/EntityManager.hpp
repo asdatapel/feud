@@ -6,10 +6,11 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Animation.hpp"
+#include "AnimationDefinition.hpp"
 #include "Drawable.hpp"
 #include "Entity.hpp"
 #include "Piece.hpp"
-#include "Animation.hpp"
 #include "UserAction.hpp"
 
 const int MAX_ENTITIES = 32;
@@ -20,7 +21,9 @@ struct EntityManager
 
     std::array<Piece, 8> pieces;
     std::unordered_map<unsigned int, Drawable> drawables;
-    std::queue<Animation> animations;
+
+    std::queue<AnimationDefinition> animationRequests;
+    std::vector<Animation> inprogressAnimations;
 
     std::vector<UserAction> userActions;
 };

@@ -40,19 +40,8 @@ int main()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only wireframes
 
-    glClearColor(7 / 255.0, 56 / 255.0, 145 / 255.0, 1);
-
-    // create pieces:
-    //      create Drawable
-    // in gamelogicsystem:
-    //      add transforms
-    // in transformsystem:
-    //      loop through transforms
-    //      get drawable of referenced piece
-    //      update
-    // in rendersystem:
-    //      loop through pieces
-    //      draw
+    glClearColor(7 / 255.0, 56 / 255.0, 50 / 255.0, 1);
+    // glClearColor(7 / 255.0, 56 / 255.0, 145 / 255.0, 1);
 
     EntityManager entityManager;
 
@@ -67,109 +56,10 @@ int main()
 
     int COUNTER = 0;
 
-    bool cameraControl = true;
     bool running = true;
     while (running)
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                running = false;
-            }
-            else if (event.type == sf::Event::Resized)
-            {
-                glViewport(0, 0, event.size.width, event.size.height);
-            }
-            else if (event.type == sf::Event::KeyPressed)
-            {
-                if (event.key.code == sf::Keyboard::Space)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Escape)
-                {
-                    cameraControl = !cameraControl;
-                }
-                else if (event.key.code == sf::Keyboard::Q)
-                {
-                    running = false;
-                }
-                else if (event.key.code == sf::Keyboard::M)
-                {
-                    //world->createRandomBoxes(boxShader);
-                }
-                else if (event.key.code == sf::Keyboard::P)
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                }
-                else if (event.key.code == sf::Keyboard::O)
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                }
-                else if (event.key.code == sf::Keyboard::Num0)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num1)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num2)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num3)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num4)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num5)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num6)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num7)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num8)
-                {
-                }
-                else if (event.key.code == sf::Keyboard::Num9)
-                {
-                }
-            }
-            else if (event.type == sf::Event::MouseButtonPressed)
-            {
-                if (event.mouseButton.button == sf::Mouse::Button::Left)
-                {
-                }
-                else if (event.mouseButton.button == sf::Mouse::Button::Right)
-                {
-                }
-                else if (event.mouseButton.button == sf::Mouse::Button::Middle)
-                {
-                }
-            }
-        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        {
-        }
 
         // glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
         // modelMat = glm::rotate(modelMat, glm::radians(COUNTER * .001f), glm::vec3(0.1f, 0.0f, 0.0f));
@@ -198,7 +88,7 @@ int main()
         // graphics.bindShader(shader3d);
         // graphics.uploadUniformMatrix4fv(shader3d, "PVM", proj * view * modelMat);
 
-        userActionSystem.update(&entityManager);
+        userActionSystem.update(&entityManager, &window);
         boardSystem.update(&entityManager);
         animationSystem.apply(&entityManager);
         renderSystem.draw(&entityManager);

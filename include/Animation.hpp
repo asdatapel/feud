@@ -2,11 +2,14 @@
 #define FEUD_ANIMATION_HPP
 
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
+
+#include "AnimationDefinition.hpp"
 
 struct Animation
 {
-    unsigned int enitity_id;
-    glm::mat4 end;
+    AnimationDefinition def;
+    float progress;
 };
 
 #endif //FEUD_ANIMATION_HPP

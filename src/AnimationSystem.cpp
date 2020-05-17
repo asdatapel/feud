@@ -2,12 +2,26 @@
 
 void AnimationSystem::apply(EntityManager *entityManager)
 {
-    while (!entityManager->animations.empty()){
-        auto animation = entityManager->animations.front();
+    while (!entityManager->animationRequests.empty())
+    {
+        auto request = entityManager->animationRequests.front();
 
-        Drawable *d = &entityManager->drawables[animation.enitity_id];
-        d->transform = animation.end;
-        
-        entityManager->animations.pop();
+        entityManager->inprogressAnimations.push_back({request, 0});
+
+        entityManager->animationRequests.pop();
+    }
+
+    for (auto it = entityManager->inprogressAnimations.begin(); it != entityManager->inprogressAnimations.end();)
+    {
+        const AnimationDefinition &animationDef = it->def;
+        Drawable *d = &entityManager->drawables[animationDef.enitity_id];
+        d->transform.position = animationDef.endPosition;
+        d->transform.rotation = glm::slerp(animationDef.startRotation, animationDef.endRotation, animationDef.interpolation(it->progress));
+        it->progress += 1.f / animationDef.length;
+
+        if (it->progress >= 1.f)
+            it = entityManager->inprogressAnimations.erase(it);
+        else
+            ++it;
     }
 }
