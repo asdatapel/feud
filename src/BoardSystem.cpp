@@ -65,9 +65,6 @@ AnimationDefinition initialTransform(unsigned int pos, unsigned int id)
 
 void BoardSystem::init(EntityManager *entityManager)
 {
-    std::string testAnswers[8] = {
-        "Red", "Blue", "Green", "Oragne", "Purple", "Yellow", "White", "Bloack"
-    }; 
 
     for (int i = 0; i < entityManager->pieces.size(); ++i)
     {
@@ -75,26 +72,43 @@ void BoardSystem::init(EntityManager *entityManager)
         p.entityId = entityManager->entities.size();
         entityManager->entities.push_back({p.entityId});
         entityManager->newDrawables.push(newDrawable(p.entityId));
-        entityManager->renderTextRequests.push(renderTextRequest(p.entityId, testAnswers[i]));
         entityManager->animationRequests.push(initialTransform(i, p.entityId));
     }
-
 }
 
 void BoardSystem::update(EntityManager *entityManager)
 {
-    for (const auto &e : entityManager->userActions)
+    for (const auto &e : entityManager->networkActions)
     {
-        if (e.t == UserInput::Type::TEST_ACTION)
+        if (e.type == NetworkAction::Type::FLIP)
         {
-            if (e.number >= 1 && e.number <= 8)
+            if (e.flipPiece >= 1 && e.flipPiece <= 8)
             {
-                auto piece = entityManager->pieces[e.number - 1];
-                AnimationDefinition t = initialTransform(e.number - 1, piece.entityId);
+                auto &piece = entityManager->pieces[e.flipPiece - 1];
+                piece.flipped = true;
+                AnimationDefinition t = initialTransform(e.flipPiece - 1, piece.entityId);
                 t.endRotation = glm::rotate(t.endRotation, glm::radians(-180.f), glm::vec3(1.f, 0.0f, 0.0f));
                 t.length = 100;
                 t.interpolation = AnimationDefinition::EaseOutCubic;
                 entityManager->animationRequests.push(t);
+                entityManager->renderTextRequests.push(renderTextRequest(piece.entityId, e.flipAnswer));
+            }
+        }
+        else if (e.type == NetworkAction::Type::RESET)
+        {
+            for (int i = 0; i < entityManager->pieces.size(); ++i)
+            {
+                auto &p = entityManager->pieces[i];
+                if (p.flipped)
+                {
+                    p.flipped = false;
+
+                    AnimationDefinition t = initialTransform(i, p.entityId);
+                    t.startRotation = glm::rotate(t.endRotation, glm::radians(-180.f), glm::vec3(1.f, 0.0f, 0.0f));
+                    t.length = 100;
+                    t.interpolation = AnimationDefinition::EaseOutCubic;
+                    entityManager->animationRequests.push(t);
+                }
             }
         }
     }

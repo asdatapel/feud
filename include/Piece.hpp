@@ -9,6 +9,7 @@ struct Piece
     unsigned int entityId;
 
     char *answer = "hello";
+    bool flipped;
 };
 
 #endif //FEUD_PIECE_HPP

@@ -11,6 +11,7 @@
 #include "Drawable.hpp"
 #include "Entity.hpp"
 #include "Model.hpp"
+#include "NetworkAction.hpp"
 #include "Piece.hpp"
 #include "Text.hpp"
 #include "UserInput.hpp"
@@ -29,6 +30,7 @@ struct EntityManager
     std::vector<Animation> inprogressAnimations;
 
     std::vector<UserInput> userActions;
+    std::vector<NetworkAction> networkActions;
 };
 
 #endif //FEUD_ENTITYMANAGER_HPP

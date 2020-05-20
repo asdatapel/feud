@@ -15,6 +15,7 @@
 #include "EntityManager.hpp"
 #include "GraphicsManager.hpp"
 #include "Model.hpp"
+#include "NetworkSystem.hpp"
 #include "RenderSystem.hpp"
 #include "UserInputSystem.hpp"
 
@@ -53,6 +54,7 @@ int main()
     graphics.newShaderResource("shaders/text");
 
     UserInputSystem userActionSystem;
+    TestNetworkSystem networkSystem;
     BoardSystem boardSystem;
     boardSystem.init(&entityManager);
     AnimationSystem animationSystem;
@@ -78,6 +80,7 @@ int main()
 
 
         userActionSystem.update(&entityManager, &window);
+        networkSystem.update(&entityManager);
         boardSystem.update(&entityManager);
         renderSystem.prepare(&entityManager);
         animationSystem.apply(&entityManager);
