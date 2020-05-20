@@ -6,7 +6,7 @@
 
 struct Piece
 {
-    unsigned int entity_id;
+    unsigned int entityId;
 
     char *answer = "hello";
 };

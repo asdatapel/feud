@@ -7,8 +7,14 @@ GraphicsManager::GraphicsManager() {}
 
 GraphicsManager::~GraphicsManager() {}
 
-int GraphicsManager::newShaderResource(std::string name)
+void GraphicsManager::newShaderResource(std::string name)
 {
+    auto it = shaderResources.find(name);
+    if (it != shaderResources.end()) //already loaded?
+    {
+        return;
+    }
+
     ShaderDefinition def = ShaderDefinition::load(name);
     ShaderResource shader;
 
@@ -50,20 +56,22 @@ int GraphicsManager::newShaderResource(std::string name)
         shader.uniforms[u] = glGetUniformLocation(shader.handle, u.c_str());
     }
 
-    int next = 0;
-    for (auto &i : shaderResources)
+    //TODO(asad): this should be part of the desc file
+    glUniform1i(glGetUniformLocation(shader.handle, "tex1"), 0);
+    glUniform1i(glGetUniformLocation(shader.handle, "tex2"), 1);
+
+    shaderResources.insert({name, shader});
+
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
     {
-        if (i.first != next)
-            break;
-        ++next;
+        std::cout << "newShaderResource end: " << err << std::endl;
     }
-    shaderResources.insert({next, shader});
-    return next;
 }
 
-void GraphicsManager::bindShader(int id)
+void GraphicsManager::bindShader(std::string name)
 {
-    glUseProgram(shaderResources[id].handle);
+    glUseProgram(shaderResources[name].handle);
 }
 
 unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX, int sizeY)
@@ -82,7 +90,8 @@ unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX,
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -95,12 +104,13 @@ unsigned int GraphicsManager::uploadTexture(const unsigned char *ptr, int sizeX,
     return handle;
 }
 
-void GraphicsManager::bindTexture(int id)
+void GraphicsManager::bindTexture(int id, int index)
 {
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, id);
 }
 
-int GraphicsManager::newBuffer(int shaderId)
+int GraphicsManager::newBuffer(std::string shader)
 {
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -110,11 +120,22 @@ int GraphicsManager::newBuffer(int shaderId)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    for (auto const &attrib : shaderResources[shaderId].attributes)
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        std::cout << "newBuffer beg: " << err << std::endl;
+    }
+
+    for (auto const &attrib : shaderResources[shader].attributes)
     {
         glEnableVertexAttribArray(attrib.first);
         glVertexAttribPointer(attrib.first, attrib.second.length, GL_FLOAT, GL_FALSE, attrib.second.stride * sizeof(GLfloat),
                               (void *)(attrib.second.distanceToFirst * sizeof(float)));
+    }
+
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        std::cout << "newBuffer end: " << err << std::endl;
     }
 
     int next = 0;
@@ -137,6 +158,14 @@ void GraphicsManager::updateBuffer(int id, float *mesh, int length)
     glBufferData(GL_ARRAY_BUFFER, length * sizeof(float), mesh, GL_STATIC_DRAW);
 }
 
+void GraphicsManager::updateSubBuffer(int id, float *mesh, int length)
+{
+    BufferResource b = bufferResources[id];
+    glBindBuffer(GL_ARRAY_BUFFER, b.vbo);
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0, length, mesh);
+}
+
 void GraphicsManager::renderBuffer(int id, int points)
 {
     if (points != 0)
@@ -155,7 +184,7 @@ void GraphicsManager::deleteBuffer(int id)
     glDeleteBuffers(1, &b.vao);
 }
 
-void GraphicsManager::uploadUniformMatrix4fv(int shaderId, std::string name, glm::mat4 mat)
+void GraphicsManager::uploadUniformMatrix4fv(std::string shader, std::string name, glm::mat4 mat)
 {
-    glUniformMatrix4fv(shaderResources[shaderId].uniforms[name], 1, GL_FALSE, glm::value_ptr(mat));
+    glUniformMatrix4fv(shaderResources[shader].uniforms[name], 1, GL_FALSE, glm::value_ptr(mat));
 }

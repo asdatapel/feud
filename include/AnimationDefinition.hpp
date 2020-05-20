@@ -8,7 +8,7 @@
 
 struct AnimationDefinition
 {
-    unsigned int enitity_id;
+    unsigned int entityId;
 
     glm::vec3 startPosition;
     glm::quat startRotation;

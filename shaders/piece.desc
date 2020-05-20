@@ -1,0 +1,29 @@
+{
+    "attributes": [
+        {
+            "name" : "inPosition",
+            "length": 3,
+            "stride": 10,
+            "distanceToFirst": 0
+        },
+        {
+            "name" : "inNormal",
+            "length": 3,
+            "stride": 10,
+            "distanceToFirst": 3
+        },
+        {
+            "name" : "inTexCoord1",
+            "length": 2,
+            "stride": 10,
+            "distanceToFirst": 6
+        },
+        {
+            "name" : "inTexCoord2",
+            "length": 2,
+            "stride": 10,
+            "distanceToFirst": 8
+        }
+    ],
+    "uniforms" : ["PVM"]
+}

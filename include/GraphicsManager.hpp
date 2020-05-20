@@ -33,24 +33,26 @@ public:
 	GraphicsManager();
 	~GraphicsManager();
 
-	int newShaderResource(std::string name);
-	void bindShader(int id);
-	void deleteShader(int id);
+	void newShaderResource(std::string name);
+	void bindShader(std::string name);
+	void deleteShader(std::string name);
 
 	int getArrayTexture(std::string name);
 	unsigned int uploadTexture(const unsigned char *ptr, int sizeX, int sizeY);
 	int getTexture(std::string name);
-	void bindTexture(int id);
+	void bindTexture(int id, int index);
 	void deleteTexture(int id);
 
-	int newBuffer(int shaderId);
+	int newBuffer(std::string shader);
 	void updateBuffer(int id, float *mesh, int length);
+	void updateSubBuffer(int id, float *mesh, int length);
 	void renderBuffer(int id, int length);
 	void deleteBuffer(int id);
+	
 
-	void uploadUniformMatrix4fv(int shaderId, std::string name, glm::mat4 mat);
+	void uploadUniformMatrix4fv(std::string shader, std::string name, glm::mat4 mat);
 
 private:
 	std::map<int, BufferResource> bufferResources;
-	std::map<int, ShaderResource> shaderResources;
+	std::map<std::string, ShaderResource> shaderResources;
 };

@@ -10,22 +10,25 @@
 #include "AnimationDefinition.hpp"
 #include "Drawable.hpp"
 #include "Entity.hpp"
+#include "Model.hpp"
 #include "Piece.hpp"
-#include "UserAction.hpp"
-
-const int MAX_ENTITIES = 32;
+#include "Text.hpp"
+#include "UserInput.hpp"
 
 struct EntityManager
 {
     std::vector<Entity> entities;
 
     std::array<Piece, 8> pieces;
+
+    std::queue<NewDrawable> newDrawables;
+    std::queue<RenderTextRequest> renderTextRequests;
     std::unordered_map<unsigned int, Drawable> drawables;
 
     std::queue<AnimationDefinition> animationRequests;
     std::vector<Animation> inprogressAnimations;
 
-    std::vector<UserAction> userActions;
+    std::vector<UserInput> userActions;
 };
 
 #endif //FEUD_ENTITYMANAGER_HPP

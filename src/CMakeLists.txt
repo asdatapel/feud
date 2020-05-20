@@ -9,7 +9,9 @@ set(SOURCE_FILES
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/ext/assimp ${PROJECT_SOURCE_DIR}/ext/assimp)
 add_subdirectory(${PROJECT_SOURCE_DIR}/ext/nlohmann_json ${PROJECT_SOURCE_DIR}/ext/nlohmann_json)
+add_subdirectory(${PROJECT_SOURCE_DIR}/ext/freetype ${PROJECT_SOURCE_DIR}/ext/freetype)
 
 include_directories(${PROJECT_SOURCE_DIR}/ext/glm)
 include_directories(${PROJECT_SOURCE_DIR}/ext/glew/include)
@@ -29,6 +31,8 @@ if (UNIX)
     target_link_libraries(feud debug sfml-window-d.a optimized sfml-window.a)
     target_link_libraries(feud debug sfml-graphics-d.a optimized sfml-graphics.a)
     target_link_libraries(feud nlohmann_json::nlohmann_json)
+    target_link_libraries(feud assimp)
+    target_link_libraries(feud freetype)
 endif()
 
 if (WIN32)
@@ -38,4 +42,6 @@ if (WIN32)
     target_link_libraries(feud debug sfml-window-d optimized sfml-window)
     target_link_libraries(feud debug sfml-graphics-d optimized sfml-graphics)
     target_link_libraries(feud nlohmann_json::nlohmann_json)
+    target_link_libraries(feud assimp)
+    target_link_libraries(feud freetype)
 endif ()

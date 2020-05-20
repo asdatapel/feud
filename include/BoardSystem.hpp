@@ -6,7 +6,7 @@
 
 struct BoardSystem
 {
-    void init(EntityManager *entityManager, GraphicsManager *graphicsManager, int shaderHandle);
+    void init(EntityManager *entityManager);
     void update(EntityManager *entityManager);
 };
 

@@ -6,7 +6,7 @@
 
 struct Transform
 {
-    unsigned int enitity_id;
+    unsigned int entityId;
 
     glm::vec3 position;
     glm::quat rotation;

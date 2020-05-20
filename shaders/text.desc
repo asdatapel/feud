@@ -1,0 +1,11 @@
+{
+    "attributes": [
+        {
+            "name" : "vertex",
+            "length": 4,
+            "stride": 4,
+            "distanceToFirst": 0
+        }
+    ],
+    "uniforms" : ["Projection"]
+}
