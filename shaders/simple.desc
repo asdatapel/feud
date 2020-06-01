@@ -1,0 +1,23 @@
+{
+    "attributes": [
+        {
+            "name" : "position",
+            "length": 3,
+            "stride": 8,
+            "distanceToFirst": 0
+        },
+        {
+            "name" : "incolor",
+            "length": 3,
+            "stride": 8,
+            "distanceToFirst": 3
+        },
+        {
+            "name" : "texcoord",
+            "length": 2,
+            "stride": 8,
+            "distanceToFirst": 6
+        }
+    ],
+    "uniforms" : ["PVM"]
+}
