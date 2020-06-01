@@ -6,6 +6,7 @@
 
 struct TestNetworkSystem
 {
+    
     void update(EntityManager *entityManager)
     {
         entityManager->networkActions.clear();
@@ -16,12 +17,12 @@ struct TestNetworkSystem
                 if (e.number >= 1 && e.number <= 8)
                 {
                     std::string testAnswers[8] = {
-                        "Red", "Blue", "Green", "Oragne", "Purple", "Yellow", "White", "Bloack"};
+                        "RED", "BLUE", "GREEN", "ORANGE", "PURPLE", "YELLOW", "WHITE", "BLACK"};
                     entityManager->networkActions.push_back({
                         NetworkAction::Type::FLIP,
                         e.number,
                         testAnswers[e.number - 1],
-                    });
+                    }); 
                 }
                 else if (e.number == 9)
                 {
@@ -32,4 +33,4 @@ struct TestNetworkSystem
     }
 };
 
-#endif // FEUD_NETWORKSYSTEM_HPP
+#endif // FEUD_NETWORKSYSTEM_HPP 

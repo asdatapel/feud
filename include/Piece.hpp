@@ -8,8 +8,14 @@ struct Piece
 {
     unsigned int entityId;
 
-    char *answer = "hello";
     bool flipped;
+};
+
+struct ScoreDisplay
+{
+    unsigned int entityId; // this should be the team????
+
+    int score;
 };
 
 #endif //FEUD_PIECE_HPP

@@ -6,8 +6,11 @@
 
 struct BoardSystem
 {
+    BoardSystem(GraphicsManager *graphicsManager);
     void init(EntityManager *entityManager);
     void update(EntityManager *entityManager);
+
+    GraphicsManager *graphicsManager;
 };
 
 #endif //FEUD_BOARDSYSTEM_HPP

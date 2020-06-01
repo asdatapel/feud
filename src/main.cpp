@@ -42,6 +42,7 @@ int main()
     glFrontFace(GL_CCW);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only wireframes
 
     //glClearColor(7 / 255.0, 56 / 255.0, 50 / 255.0, 1);
@@ -50,15 +51,18 @@ int main()
     EntityManager entityManager;
 
     GraphicsManager graphics;
+    graphics.newShaderResource("shaders/simple");
     graphics.newShaderResource("shaders/piece");
     graphics.newShaderResource("shaders/text");
+    graphics.init("shaders/text");
 
     UserInputSystem userActionSystem;
     TestNetworkSystem networkSystem;
-    BoardSystem boardSystem;
+    BoardSystem boardSystem(&graphics);
     boardSystem.init(&entityManager);
     AnimationSystem animationSystem;
     RenderSystem renderSystem(&graphics);
+    renderSystem.init(&entityManager);
 
     int COUNTER = 0;
 
@@ -75,15 +79,11 @@ int main()
         {
         }
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-
-
         userActionSystem.update(&entityManager, &window);
         networkSystem.update(&entityManager);
         boardSystem.update(&entityManager);
-        renderSystem.prepare(&entityManager);
         animationSystem.apply(&entityManager);
+        renderSystem.drawSecondary(&entityManager);
         renderSystem.draw(&entityManager);
 
         window.display();

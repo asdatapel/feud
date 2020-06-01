@@ -1,11 +1,21 @@
 #ifndef FEUD_NETWORKACTION_HPP
 #define FEUD_NETWORKACTION_HPP
 
-struct NetworkAction {
-    enum struct Type {
+struct NetworkAction
+{
+    enum struct Type
+    {
         RESET,
+        MATCH_START,
+        MATCH_END,
+        ROUND_START,
+        ROUND_END,
+        FACEOFF_START,
+        FACEOFF_END,
+        SCORE_UPDATE,
         FLIP,
         INCORRECT,
+        GAME_DUMP,
     };
 
     Type type;

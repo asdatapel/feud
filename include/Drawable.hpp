@@ -6,29 +6,41 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "GraphicsManager.hpp"
 #include "Model.hpp"
 #include "Transform.hpp"
 
-struct Drawable
+struct Material
 {
-    std::string shader;  // TODO(asad):  should be its own class
-    int meshHandle;
-    std::vector<unsigned int> textureHandles;
+    struct Texture
+    {
+        enum struct Type
+        {
+            FILE,
+            BUFFER,
+        };
+        std::string name;
+        sf::Image data;
+        unsigned int handle;
+    };
 
-    size_t bufferSize;
-
-    Transform transform;
+    std::vector<Texture> textures;
 };
 
-struct NewDrawable
+struct Drawable
+{
+    int meshHandle;
+    size_t bufferSize;
+};
+
+struct DrawRequest
 {
     unsigned int entityId;
 
-    Model model;
-    std::vector<sf::Image> textures;
-
-    std::string shader;
+    Drawable *drawable;
+    Transform *transform;
+    std::string shader; // TODO(asad): should be its own class
+    Material *material;
+    Material::Texture *target;
 };
 
 #endif //MINECRAFT_CLONE_DRAWABLE_H
