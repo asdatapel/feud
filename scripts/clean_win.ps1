@@ -1,5 +1,3 @@
-rm -r build
-mkdir build
-cd build
-cmake ../ -G "Visual Studio 15 2017" -A x64
-cd ../
+rm -r -fo ./build
+mkdir ./build
+./premake5.exe vs2017

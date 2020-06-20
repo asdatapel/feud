@@ -3,3 +3,4 @@
 .vscode/*
 build/*
 ext/*
+premake5.exe
