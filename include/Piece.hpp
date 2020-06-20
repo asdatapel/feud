@@ -7,14 +7,15 @@
 struct Piece
 {
     unsigned int entityId;
-
+    
     bool flipped;
 };
 
+// TODO(asad): don't need this at all
 struct ScoreDisplay
 {
     unsigned int entityId; // this should be the team????
-
+    
     int score;
 };
 

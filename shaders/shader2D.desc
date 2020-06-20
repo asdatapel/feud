@@ -1,0 +1,17 @@
+{
+    "attributes": [
+        {
+            "name" : "position",
+            "length": 2,
+            "stride": 4,
+            "distanceToFirst": 0
+        },
+        {
+            "name" : "texcoord",
+            "length": 2,
+            "stride": 4,
+            "distanceToFirst": 2
+        }
+    ],
+    "uniforms" : ["transform"]
+}

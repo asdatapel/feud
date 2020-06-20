@@ -30,6 +30,7 @@ struct RenderTextRequest
 
     unsigned int entityId;
     unsigned int texIndex;
+    sf::Color clearColor;
 };
 
 #endif // FEUD_TEXT_HPP

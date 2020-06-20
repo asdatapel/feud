@@ -11,7 +11,7 @@
 
 glm::mat4 toMat4(const Transform &transform)
 {
-    return glm::translate(glm::mat4(1.0f), transform.position) * glm::mat4_cast(transform.rotation);
+    return glm::scale(glm::translate(glm::mat4(1.0f), transform.position) * glm::mat4_cast(transform.rotation), transform.scale);
 }
 
 struct RenderSystem
@@ -24,6 +24,9 @@ struct RenderSystem
 
         entityManager->baseShader = "shaders/base";
         graphicsManager->newShaderResource(entityManager->baseShader);
+
+        entityManager->shader2D = "shaders/shader2D";
+        graphicsManager->newShaderResource(entityManager->shader2D);
 
         sf::Image screenTexture;
         screenTexture.create(1920, 1080, sf::Color::Transparent); // TODO(asad): values should be configurable somewhere
@@ -75,7 +78,7 @@ struct RenderSystem
             graphicsManager->bindFramebuffer(entityManager->secondaryFramebuffer);
             unsigned int texColorBuffer = entityManager->materials[r.entityId].textures[r.texIndex].handle;
             graphicsManager->bindTextureToFramebuffer(entityManager->secondaryFramebuffer, texColorBuffer);
-            graphicsManager->clear({0, 0, 0, 0});
+            graphicsManager->clear(r.clearColor);
 
             for (auto const &td : r.textDefintions)
             {
@@ -117,6 +120,24 @@ struct RenderSystem
             graphicsManager->renderBuffer(dr.drawable->meshHandle, dr.drawable->bufferSize);
 
             entityManager->drawRequests.pop();
+        }
+
+        // draw 2d elements
+        glm::mat4 ortho = glm::ortho(0., 2., 0., 2.);
+
+        while (!entityManager->draw2DRequests.empty())
+        {
+            const auto &dr = entityManager->draw2DRequests.front();
+
+            graphicsManager->bindTextureToFramebuffer(entityManager->secondaryFramebuffer, dr.target->handle);
+            graphicsManager->bindShader(entityManager->shader2D);
+
+            graphicsManager->bindTexture(dr.texture->handle, 0);
+
+            graphicsManager->uploadUniformMatrix4fv(entityManager->shader2D, "transform", ortho * toMat4(*dr.transform));
+            graphicsManager->renderBuffer(entityManager->screenQuad.meshHandle, entityManager->screenQuad.bufferSize);
+
+            entityManager->draw2DRequests.pop();
         }
 
         // draw main framebuffer to screen

@@ -5,11 +5,20 @@ struct UserInput
 {
     enum struct Type
     {
-        TEST_ACTION
+        TEST_ACTION,
+        BUZZ,
+        SUBMIT,
+        LETTER_INPUT,
+        BACKSPACE,
+        LEFT_CLICK,
+        RIGHT_CLICK,
+        SELECTION,
+        READY,
     };
-
-    Type t;
+    
+    Type t; // TODO(asad): should be named "type"
     int number = -1;
+    char character;
 };
 
 #endif //FEUD_USERINPUT_HPP

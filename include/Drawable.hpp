@@ -43,4 +43,13 @@ struct DrawRequest
     Material::Texture *target;
 };
 
+struct Draw2DRequest
+{
+    unsigned int entityId;
+
+    Transform *transform;
+    Material::Texture *texture;
+    Material::Texture *target;
+};
+
 #endif //MINECRAFT_CLONE_DRAWABLE_H

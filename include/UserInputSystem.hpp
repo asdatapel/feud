@@ -40,6 +40,14 @@ struct UserInputSystem
                 {
                     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 }
+                else if (event.key.code == sf::Keyboard::Enter)
+                {
+                    entityManager->userActions.push_back({UserInput::Type::SUBMIT});
+                }
+                else if (event.key.code == sf::Keyboard::Space)
+                {
+                    entityManager->userActions.push_back({UserInput::Type::READY});
+                }
                 else if (event.key.code == sf::Keyboard::M)
                 {
                     entityManager->userActions.push_back({UserInput::Type::TEST_ACTION});
@@ -74,7 +82,7 @@ struct UserInputSystem
                 }
                 else if (event.key.code == sf::Keyboard::Num8 || event.key.code == sf::Keyboard::Numpad8)
                 {
-                    entityManager->userActions.push_back({UserInput::Type::TEST_ACTION,8});
+                    entityManager->userActions.push_back({UserInput::Type::TEST_ACTION, 8});
                 }
                 else if (event.key.code == sf::Keyboard::Num9 || event.key.code == sf::Keyboard::Numpad9)
                 {
@@ -84,14 +92,28 @@ struct UserInputSystem
                 {
                     entityManager->userActions.push_back({UserInput::Type::TEST_ACTION, 0});
                 }
+                else if (event.key.code == sf::Keyboard::LShift)
+                {
+                    entityManager->userActions.push_back({UserInput::Type::BUZZ, 0});
+                }
+                else if (event.key.code == sf::Keyboard::BackSpace)
+                {
+                    entityManager->userActions.push_back({UserInput::Type::BACKSPACE});
+                }
+                else
+                {
+                    entityManager->userActions.push_back({UserInput::Type::LETTER_INPUT, 0, 'A' + (char)(event.key.code - sf::Keyboard::A)});
+                }
             }
             else if (event.type == sf::Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == sf::Mouse::Button::Left)
                 {
+                    entityManager->userActions.push_back({UserInput::Type::LEFT_CLICK});
                 }
                 else if (event.mouseButton.button == sf::Mouse::Button::Right)
                 {
+                    entityManager->userActions.push_back({UserInput::Type::RIGHT_CLICK});
                 }
                 else if (event.mouseButton.button == sf::Mouse::Button::Middle)
                 {

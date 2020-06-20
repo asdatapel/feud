@@ -10,6 +10,7 @@ struct Transform
 
     glm::vec3 position;
     glm::quat rotation;
+    glm::vec3 scale = {1, 1, 1};
 };
 
 #endif //FEUD_TRANSFORM_HPP

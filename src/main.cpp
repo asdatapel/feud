@@ -13,10 +13,14 @@
 #include "BoardSystem.hpp"
 #include "Drawable.hpp"
 #include "EntityManager.hpp"
+#include "GameplayInterfaceSystem.hpp"
 #include "GraphicsManager.hpp"
+#include "MatchStateSystem.hpp"
 #include "Model.hpp"
 #include "NetworkSystem.hpp"
 #include "RenderSystem.hpp"
+#include "ServerSystem.hpp"
+#include "TimedEventSystem.hpp"
 #include "UserInputSystem.hpp"
 
 #include "Text.hpp"
@@ -48,7 +52,12 @@ int main()
     //glClearColor(7 / 255.0, 56 / 255.0, 50 / 255.0, 1);
     glClearColor(7 / 255.0, 56 / 255.0, 145 / 255.0, 1);
 
+    std::array<MatchState::Family, 2> testFamilies = {
+            MatchState::Family{"family1", {{{"p1"}, {"playerA2"}, {"playerA3"}, {"playerA4"}, {}, {}}}, 1},
+            MatchState::Family{"family2", {{{"playerB1"}, {"playerB2"}, {"playerB3"}, {"playerB4"}, {"playerB5"}, {}}}, 1}};
+
     EntityManager entityManager;
+    entityManager.playerName = "p1";
 
     GraphicsManager graphics;
     graphics.newShaderResource("shaders/simple");
@@ -57,9 +66,18 @@ int main()
     graphics.init("shaders/text");
 
     UserInputSystem userActionSystem;
+    ServerEntityManager serverEntityManager;
+    ServerSystem serverSystem;
+    serverSystem.init(testFamilies);
     TestNetworkSystem networkSystem;
+    networkSystem.init();
+    MatchStateSystem matchStateSystem;
+    matchStateSystem.init(&entityManager);
     BoardSystem boardSystem(&graphics);
     boardSystem.init(&entityManager);
+    GameplayInterfaceSystem gameplayInterfaceSystem(&graphics);
+    gameplayInterfaceSystem.init(&entityManager);
+    TimedEventSystem timedEventSystem;
     AnimationSystem animationSystem;
     RenderSystem renderSystem(&graphics);
     renderSystem.init(&entityManager);
@@ -69,19 +87,13 @@ int main()
     bool running = true;
     while (running)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
-        {
-        }
-
         userActionSystem.update(&entityManager, &window);
         networkSystem.update(&entityManager);
+        serverSystem.tick(&serverEntityManager, &entityManager);
+        matchStateSystem.update(&entityManager);
         boardSystem.update(&entityManager);
+        gameplayInterfaceSystem.update(&entityManager);
+        timedEventSystem.update(&entityManager);
         animationSystem.apply(&entityManager);
         renderSystem.drawSecondary(&entityManager);
         renderSystem.draw(&entityManager);
