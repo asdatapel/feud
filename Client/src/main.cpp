@@ -19,7 +19,6 @@
 #include "Model.hpp"
 #include "NetworkSystem.hpp"
 #include "RenderSystem.hpp"
-#include "ServerSystem.hpp"
 #include "TimedEventSystem.hpp"
 #include "UserInputSystem.hpp"
 
@@ -66,9 +65,6 @@ int main()
     graphics.init("shaders/text");
 
     UserInputSystem userActionSystem;
-    ServerEntityManager serverEntityManager;
-    ServerSystem serverSystem;
-    serverSystem.init(testFamilies);
     TestNetworkSystem networkSystem;
     networkSystem.init();
     MatchStateSystem matchStateSystem;
@@ -89,7 +85,6 @@ int main()
     {
         userActionSystem.update(&entityManager, &window);
         networkSystem.update(&entityManager);
-        serverSystem.tick(&serverEntityManager, &entityManager);
         matchStateSystem.update(&entityManager);
         boardSystem.update(&entityManager);
         gameplayInterfaceSystem.update(&entityManager);

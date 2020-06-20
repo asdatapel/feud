@@ -1,1 +1,1 @@
- ./build/bin/Debug/Client.exe
+ ./build/Client/bin/Debug/Client.exe

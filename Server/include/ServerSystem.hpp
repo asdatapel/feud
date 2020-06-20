@@ -2,13 +2,7 @@
 #define FEUD_SERVERSYSTEM_HPP
 
 #include "EntityManager.hpp"
-
-struct ServerEntityManager
-{
-    // pairs of ServerEvents and destinations
-    std::queue<std::pair<ServerEvent, std::string>> pendingServerEvents;
-    std::queue<std::pair<ClientEvent, std::string>> clientEvents;
-};
+#include "ServerEntityManager.hpp"
 
 struct ServerSystem
 {

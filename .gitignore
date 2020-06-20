@@ -1,6 +1,9 @@
 .DS_Store
 .idea/*
 .vscode/*
+.vs/*
 build/*
 ext/*
 premake5.exe
+*.sln
+*vcxproj*

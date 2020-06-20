@@ -52,26 +52,10 @@ struct MatchState
     unsigned int incorrects;
 
     // helper functions
-    std::string whoseTurnName(){
-        unsigned int index = currentPlayers[playingFamily] % families[playingFamily].playerCount;
-        return families[playingFamily].players[index].name;
-    };
-    std::array<std::string, 2> whoIsInFaceoffNames()
-    {
-        int family1Index = round % families[0].playerCount;
-        int family2Index = round % families[1].playerCount;
-        return {families[0].players[family1Index].name, families[1].players[family2Index].name};
-    };
-    std::string whoBuzzedName()
-    {
-        auto faceoffers = whoIsInFaceoffNames();
-        return faceoffers[buzzer];
-    };
-    std::string whoDidntBuzzName()
-    {
-        auto faceoffers = whoIsInFaceoffNames();
-        return faceoffers[1 - buzzer];
-    };
+    std::string whoseTurnName();
+    std::array<std::string, 2> whoIsInFaceoffNames();
+    std::string whoBuzzedName();
+    std::string whoDidntBuzzName();
     std::string playerName(int team, int index);
 };
 

@@ -1,22 +1,43 @@
 workspace "Feud"
-	location "build"
     configurations { "Debug", "Release" }
     systemversion "latest"
     language "C++"
     cppdialect "C++17"
     architecture "x86_64"
 
+project "Common"
+    location "Common"
+    kind "StaticLib"
+    language "C++"
+    architecture "x64"
+
+    targetdir "build/%{prj.name}/bin/%{cfg.buildcfg}"
+    objdir "build/%{prj.name}/obj/%{cfg.buildcfg}"
+    
+    files { "%{prj.name}/include/**.hpp", "%{prj.name}/src/**.cpp" }
+    includedirs {"%{prj.name}/include"}
+
+    filter "configurations:Debug"
+         defines { "DEBUG" }
+         symbols "On" 
+         
+     filter "configurations:Release"
+         defines { "NDEBUG" }
+         optimize "On"
+
 project "Client"
+    location "Client"
     kind "ConsoleApp"
     language "C++"
     architecture "x64"
 
-    targetdir "build/bin/%{cfg.buildcfg}"
-    objdir "build/obj/%{cfg.buildcfg}"
+    targetdir "build/%{prj.name}/bin/%{cfg.buildcfg}"
+    objdir "build/%{prj.name}/obj/%{cfg.buildcfg}"
 
-    files { "include/**.hpp", "src/**.cpp" }
+    files { "%{prj.name}/include/**.hpp", "%{prj.name}/src/**.cpp" }
     includedirs {
-        "include/",
+        "%{prj.name}/include",
+        "Common/include",
 
         "ext/nlohmann_json/single_include",
         "ext/glm",
@@ -24,7 +45,7 @@ project "Client"
         "ext/assimp/include",
         "ext/glew/include",
         "ext/freetype/include"
-        }
+    }
 
     libdirs {
         "ext/glew/lib",
@@ -32,6 +53,8 @@ project "Client"
     }
 
     links {
+        "Common",
+
         "glew32s",
         "OpenGL32",
     }
@@ -62,6 +85,44 @@ project "Client"
         }
 
         
+    filter "configurations:Release"
+        defines { "NDEBUG" }
+        optimize "On"
+
+project "Client"
+    kind "ConsoleApp"
+    language "C++"
+    architecture "x64"
+    
+    targetdir "build/%{prj.name}/bin/%{cfg.buildcfg}"
+    objdir "build/obj/%{cfg.buildcfg}"
+
+    files { "%{prj.name}/include/**.hpp", "%{prj.name}/src/**.cpp" }
+    includedirs {
+        "%{prj.name}/include",
+        "Common/include",
+
+        "ext/SFML/include",
+    }
+
+    libdirs {
+        "ext/SFML/lib",
+    }
+
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        symbols "On"
+
+        debugdir "./"
+
+        links {
+            "sfml-network-d",
+        }
+
+        postbuildcommands {
+            "{COPY} ../ext/SFML/bin/*.dll %{cfg.targetdir}",
+        }
+ 
     filter "configurations:Release"
         defines { "NDEBUG" }
         optimize "On"
